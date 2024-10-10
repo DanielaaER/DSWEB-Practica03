@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>CRUD de Empleados</title>
+        <h:outputStylesheet name="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+        <style>
+            body {
+                background-color: #f5f5f5;
+                font-family: 'Arial', sans-serif;
+                color: #333;
+            }
+
+            h2 {
+                color: #007bff;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .form-container {
+                margin: 0 auto;
+                padding: 20px;
+                max-width: 800px;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .btn-custom {
+                background-color: #007bff;
+                color: white;
+                border-radius: 5px;
+            }
+
+            .btn-custom:hover {
+                background-color: #0056b3;
+            }
+
+            .data-table {
+                margin-top: 20px;
+            }
+
+            .dialog-panel {
+                background-color: #f0f8ff;
+                border-radius: 8px;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <f:view>
+            <div class="form-container">
+                <h2>Gestión de Empleados</h2>
+
+                <h:form id="mainForm">
+                    <p:growl id="mimsg" showDetail="true" />
+
+                    <p:panel header="Empleado" style="margin-bottom: 20px;">
+                        <div class="form-group">
+                            <p:outputLabel for="nombre" value="Nombre:" />
+                            <p:inputText id="nombre" value="#{empleado.empleado.nombre}" styleClass="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="direccion" value="Dirección:" />
+                            <p:inputText id="direccion" value="#{empleado.empleado.direccion}" styleClass="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="telefono" value="Teléfono:" />
+                            <p:inputText id="telefono" value="#{empleado.empleado.telefono}" styleClass="form-control" />
+                        </div>
+
+                        <p:commandButton id="btoGuardar" value="Guardar" actionListener="#{empleado.addEmpleado}" update="mimsg, empleadosTable" styleClass="btn btn-custom" />
+                    </p:panel>
+
+                    <p:dataTable id="empleadosTable" value="#{empleado.empleados}" var="emp" styleClass="table table-striped data-table">
+                        <p:column headerText="ID">
+                            #{emp.id}
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            #{emp.nombre}
+                        </p:column>
+                        <p:column headerText="Dirección">
+                            #{emp.direccion}
+                        </p:column>
+                        <p:column headerText="Teléfono">
+                            #{emp.telefono}
+                        </p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton value="Actualizar" oncomplete="PF('dlgActualizar').show()" actionListener="#{empleado.prepareUpdate(emp)}" update="updateForm" process="@this" styleClass="btn btn-outline-primary" />
+
+                            <p:commandButton value="Eliminar" actionListener="#{empleado.deleteEmpleado(emp.id)}" update="mimsg, empleadosTable" styleClass="btn btn-outline-danger" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+
+            <p:dialog id="dialogActualizar" header="Actualizar Empleado" widgetVar="dlgActualizar" modal="true" closable="true" draggable="false" resizable="false" showEffect="fade" hideEffect="fade">
+                <h:form id="updateForm">
+                    <p:panelGrid columns="2" styleClass="dialog-panel">
+                        <p:outputLabel for="updateNombre" value="Nombre:" />
+                        <p:inputText id="updateNombre" value="#{empleado.empleado.nombre}" styleClass="form-control" />
+
+                        <p:outputLabel for="updateDireccion" value="Dirección:" />
+                        <p:inputText id="updateDireccion" value="#{empleado.empleado.direccion}" styleClass="form-control" />
+
+                        <p:outputLabel for="updateTelefono" value="Teléfono:" />
+                        <p:inputText id="updateTelefono" value="#{empleado.empleado.telefono}" styleClass="form-control" />
+                    </p:panelGrid>
+
+                    <p:commandButton id="btoActualizar" value="Guardar Cambios" actionListener="#{empleado.updateEmpleado}" update=":mainForm:mimsg, :mainForm:empleadosTable" oncomplete="PF('dlgActualizar').hide()" styleClass="btn btn-custom" />
+                </h:form>
+            </p:dialog>
+        </f:view>
+    </h:body>
+</html>
